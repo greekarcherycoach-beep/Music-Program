@@ -1,0 +1,80 @@
+{
+  "name": "dj-ape1",
+  "version": "2.0.0",
+  "description": "Dj Ape1 \u2014 music library & player",
+  "main": "main.js",
+  "author": "Dj Ape1",
+  "scripts": {
+    "start": "electron .",
+    "predist": "node scripts/get-mpv.js",
+    "dist": "electron-builder --win nsis portable --publish never",
+    "dist:installer": "electron-builder --win nsis --publish never",
+    "dist:portable": "electron-builder --win portable --publish never",
+    "test": "node tests/native.test.js && node tests/mpv.test.js && node tests/engine.test.js"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "gr.djape1.library",
+    "productName": "Dj Ape1",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "mpv.js",
+      "native.js",
+      "preload.js",
+      "app/**",
+      "assets/**"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "perMachine": false,
+      "artifactName": "DjApe1-Setup-${version}.exe"
+    },
+    "portable": {
+      "artifactName": "DjApe1-Portable-${version}.exe"
+    },
+    "extraResources": [
+      {
+        "from": "vendor/mpv",
+        "to": "mpv"
+      }
+    ],
+    "fileAssociations": [
+      {
+        "ext": [
+          "mp3",
+          "flac",
+          "wav",
+          "m4a",
+          "aac",
+          "ogg",
+          "opus",
+          "wma",
+          "aiff",
+          "aif",
+          "ape"
+        ],
+        "name": "Audio file",
+        "role": "Viewer"
+      }
+    ]
+  },
+  "dependencies": {
+    "music-metadata": "^11.16.1"
+  }
+}
