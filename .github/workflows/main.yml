@@ -1,0 +1,34 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:        # run manually: Actions tab -> "Build Windows" -> Run workflow
+  push:
+    tags: ['v*']            # or push a tag such as v2.0.0 to also publish a GitHub Release
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm test
+      - name: Download the mpv audio engine (optional, build continues without it)
+        run: node scripts/get-mpv.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm run dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DjApe1-windows
+          path: dist/*.exe
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.exe
